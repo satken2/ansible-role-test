@@ -1,2 +1,8 @@
 ---
 # tasks file for role-test
+- name: ファイルを作成
+  file:
+    path: /root/test.txt
+    state: present
+    owner: root
+#    mode: 0755
