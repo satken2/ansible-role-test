@@ -1,3 +1,13 @@
+void setBuildStatus(String message, String state) {
+  step([
+    $class: "GitHubCommitStatusSetter",
+    reposSource: [$class: "ManuallyEnteredRepositorySource", url: "https://github.com/satken2/ansible-role-test.git"],
+    contextSource: [$class: "ManuallyEnteredCommitContextSource", context: "Ansible-Molecule"],
+    errorHandlers: [[$class: "ChangingBuildStatusErrorHandler", result: "UNSTABLE"]],
+    statusResultSource: [ $class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]] ]
+  ]);
+}
+
 pipeline {
   agent {
     docker {
@@ -7,13 +17,6 @@ pipeline {
   }
 
   stages {
-    stage ('対象のブランチにチェックアウト') {
-      steps {
-        git branch: targetBranch, 
-            url: 'https://github.com/satken2/ansible-role-test.git'
-      }
-    }
-
     stage ('バージョンの表示') {
       steps {
         sh '''
@@ -31,5 +34,16 @@ pipeline {
       }
     }
     
+  }
+  // 実行結果に応じてGitLabのコミットステータスを変更する
+  post {
+    success {
+      echo "SUCCESS"
+      setBuildStatus("AnsibleチェックOK", "SUCCESS");
+    }
+    failure{
+      echo "failure"
+      setBuildStatus("AnsibleチェックNG", "FAIL");
+    }
   }
 }
