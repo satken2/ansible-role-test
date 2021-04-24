@@ -7,13 +7,6 @@ pipeline {
   }
 
   stages {
-    stage ('対象のブランチにチェックアウト') {
-      steps {
-        git branch: targetBranch, 
-            url: 'https://github.com/satken2/ansible-role-test.git'
-      }
-    }
-
     stage ('バージョンの表示') {
       steps {
         sh '''
