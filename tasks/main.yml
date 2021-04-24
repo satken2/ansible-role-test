@@ -5,4 +5,4 @@
     path: /root/test.txt
     state: present
     owner: root
-#    mode: 0755
+    # mode: 0755
